@@ -21,19 +21,25 @@ private class FakeApi : ApiClient {
         jsonBody: String?,
         deserializer: DeserializationStrategy<T>,
     ): T = EmptyResponse() as T
+
     override fun setToken(token: String?) = Unit
-    override fun on(event: ApiEvent, handler: () -> Unit) = Unit
+
+    override fun on(
+        event: ApiEvent,
+        handler: () -> Unit,
+    ) = Unit
 }
 
 class StripePaymentPluginContractTest {
     private fun sdk() = DefaultPlatformSdk(FakeApi(), ApiClientConfig("http://x"), DefaultEventBus(FakeApi()))
 
     @Test
-    fun `install registers the stripe section and payment action`() = runTest {
-        val platform = sdk()
-        StripePaymentPlugin().install(platform)
-        assertTrue(platform.getComponents().containsKey("PaymentMethodStripe"))
-        assertNotNull(platform.components.paymentAction("stripe"))
-        assertTrue(platform.components.supportedPaymentMethodCodes().contains("stripe"))
-    }
+    fun `install registers the stripe section and payment action`() =
+        runTest {
+            val platform = sdk()
+            StripePaymentPlugin().install(platform)
+            assertTrue(platform.getComponents().containsKey("PaymentMethodStripe"))
+            assertNotNull(platform.components.paymentAction("stripe"))
+            assertTrue(platform.components.supportedPaymentMethodCodes().contains("stripe"))
+        }
 }

@@ -32,5 +32,7 @@ class StripePaymentService(
         api.get("$baseEndpoint/session-status/$sessionId")
 
     @Serializable
-    private data class CreateSessionBody(@SerialName("invoice_id") val invoiceId: String)
+    private data class CreateSessionBody(
+        @SerialName("invoice_id") val invoiceId: String,
+    )
 }

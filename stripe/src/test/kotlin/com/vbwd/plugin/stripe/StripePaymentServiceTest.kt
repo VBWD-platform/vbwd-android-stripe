@@ -13,20 +13,27 @@ class StripePaymentServiceTest {
     private val service = StripePaymentService(client)
 
     @Test
-    fun `createSession returns the session url and id`() = runTest {
-        coEvery {
-            client.request<StripeSessionResponse>(HttpMethod.POST, "/plugins/stripe/create-session", any(), any())
-        } returns StripeSessionResponse(sessionUrl = "https://pay/x", sessionId = "cs_1")
-        val response = service.createSession("inv1")
-        assertEquals("https://pay/x", response.sessionUrl)
-        assertEquals("cs_1", response.sessionId)
-    }
+    fun `createSession returns the session url and id`() =
+        runTest {
+            coEvery {
+                client.request<StripeSessionResponse>(HttpMethod.POST, "/plugins/stripe/create-session", any(), any())
+            } returns StripeSessionResponse(sessionUrl = "https://pay/x", sessionId = "cs_1")
+            val response = service.createSession("inv1")
+            assertEquals("https://pay/x", response.sessionUrl)
+            assertEquals("cs_1", response.sessionId)
+        }
 
     @Test
-    fun `checkStatus reads the session status`() = runTest {
-        coEvery {
-            client.request<StripeStatusResponse>(HttpMethod.GET, "/plugins/stripe/session-status/cs_1", any(), any())
-        } returns StripeStatusResponse(status = "paid")
-        assertEquals("paid", service.checkStatus("cs_1").status)
-    }
+    fun `checkStatus reads the session status`() =
+        runTest {
+            coEvery {
+                client.request<StripeStatusResponse>(
+                    HttpMethod.GET,
+                    "/plugins/stripe/session-status/cs_1",
+                    any(),
+                    any(),
+                )
+            } returns StripeStatusResponse(status = "paid")
+            assertEquals("paid", service.checkStatus("cs_1").status)
+        }
 }
